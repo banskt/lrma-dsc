@@ -42,6 +42,7 @@ def get_blockdiag_matrix(n, rholist, rhobg, idx_groups):
 def effect_size(n, p, k, Q, h2, g2,
         aq, a0, nsample, 
         cov_design = 'blockdiag',
+        sharing_proportion = 1.0,
         shuffle = False,
         seed = None):
     '''
@@ -59,6 +60,7 @@ def effect_size(n, p, k, Q, h2, g2,
         g2 = np.ones(n) * g2
     if not isinstance(nsample, np.ndarray):
         nsample = np.ones(n) * nsample
+    p_shared = int(p * sharing_proportion)
 
     C_ixgrp, C = distribute_samples_to_classes(Q, n, shuffle = shuffle)
     ggT  = np.sqrt(np.einsum('i,j->ij', g2, g2))
@@ -70,14 +72,20 @@ def effect_size(n, p, k, Q, h2, g2,
     # normalize L for correct variance.
     L  = np.random.multivariate_normal(np.zeros(n), covL, size = k).T 
     L /= np.sqrt(k)
-    F  = spstats.ortho_group.rvs(p)[:, :k]
+    # F with orthogonal columns
+    F  = spstats.ortho_group.rvs(p_shared)[:, :k]
+    # M is a sparse matrix of effect sizes
     scaleM = np.sqrt((h2 - g2) * 0.5 / p)
     M = np.random.laplace(np.zeros(n), scaleM, size = (p, n)).T
-    # obtain the matrix
-    Y = L @ F.T
-    stderr = 1 / np.sqrt(nsample)
-    for i in range(n):
-        noise = np.random.normal(0, stderr[i], size = p)
-        Y[i, :] += noise
-    Z = Y / stderr.reshape(n, 1)
-    return Z, L, F, M, C
+    # obtain the true effect sizes
+    Y = np.zeros((n, p))
+    p_choose = np.sort(np.random.choice(p, p_shared, replace = False))
+    Y[:, p_choose] = L @ F.T
+    Y += M
+    # the observed effect size is normally distributed, with mean Y
+    # and variance obtained from the residuals.
+    stderr = np.sqrt((1 - np.square(Y)) / nsample.reshape(n, 1))
+    Yobs = np.random.normal(Y, stderr)
+    # observed Z-scores
+    Z = Yobs / stderr
+    return Z, Yobs, Y, L, F, M, C

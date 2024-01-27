@@ -14,11 +14,10 @@ DSC:
   replicate:      10
   define:
     simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
-    lowrankfit:   rpca
-#    lowrankfit:   rpca, nnm, nnm_sparse, tsvd, identical
-#    matfactor:    svd, factorgo 
+    lowrankfit:   rpca, nnm, nnm_sparse, identical
   run:
-    lrma:         simulate * lowrankfit
+    lrma:         simulate * lowrankfit * truncated_svd
+#    factorgo:     simulate * identical * factorgo
 
 # simulate modules
 # ===================
@@ -58,28 +57,53 @@ blockdiag_aq(blockdiag):
 # ===================
 rpca: rpca.py
   Z: $Z
-  max_iter: 100
+  max_iter: 10000
   $X: X
   $M: M
   $model: model
 
-# 
-# nnm: nnm.py
-#   Y: $Y
-#   max_iter: 10000
-# 
+nnm: nnm.py
+  Z: $Z
+  max_iter: 10000
+  $X: X
+  $model: model
+
+nnm_sparse: nnm_sparse.py
+  Z: $Z
+  max_iter: 10000
+  $X: X
+  $M: M
+  $model: model
+
+identical: identical.py
+  Z: $Z
+  $X: X
+
 # nnm_sparse: nnm_sparse.py
 #   Y: $Y
 #   max_iter: 10000
 
 # Factorization modules
 # ===================
-#svd: svd.py
-#  X: $X
-#  $L: L
-#  $F: F
-#  $model: model
+factorgo: factorgo.py
+  X: $X
+  k: 100
+  nsample: 10000
+  $L_est: L
+  $Lvar_est: Lvar
+  $F_est: F
+  $Fvar_est: Fvar
+  $S2: S2
+  $ard_post_mean: ard_post_mean
 
+truncated_svd: truncated_svd.py
+  X: $X
+  k: 100
+  $L_est: L
+  $Lvar_est: Lvar
+  $F_est: F
+  $Fvar_est: Fvar
+  $S2: S2
 
 # Analysis modules
 # ===================
