@@ -10,10 +10,9 @@ DSC:
                   modules/matfactor,
                   modules/score
   output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma_single
-  replicate:      1
+  replicate:      2
   define:
-    simulate:     blockdiag
-#    simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
+    simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
     lowrankfit:   rpca, nnm, nnm_sparse, identical
   run:
     lrma:         simulate * lowrankfit * truncated_svd * score

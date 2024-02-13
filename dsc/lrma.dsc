@@ -1,5 +1,4 @@
-# A DSC for evaluating prediction accuracy of multiple linear regression
-# methods in different scenarios.
+# DSC for evaluating different low rank matrix approximation methods in different scenarios.
 #
 
 DSC:
@@ -16,42 +15,47 @@ DSC:
     simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
     lowrankfit:   rpca, nnm, nnm_sparse, identical
   run:
-    lrma:         simulate * lowrankfit * truncated_svd
-#    factorgo:     simulate * identical * factorgo
+    lrma:         simulate * lowrankfit * truncated_svd * score
+    factorgo:     simulate * identical * factorgo * score
 
 # simulate modules
 # ===================
 
 blockdiag: blockdiag.py
-  n: 500
-  p: 1000
-  k: 100
+  n: 200
+  p: 2000
+  k: 10
   Q: 3
-  h2: 0.6
-  h2_shared_frac: 0.6
+  h2: 0.2
+  h2_shared_frac: 0.5
   aq: 0.6
   a0: 0.2
-  nsample: 10000
+  nsample_min: 10000
+  nsample_max: 40000
+  sharing_proportion: 1.0
   $Z: Z
+  $effect_size_obs: effect_size_obs
+  $effect_size_true: effect_size_true
   $Ltrue: L
   $Ftrue: F
   $Mtrue: M
   $Ctrue: C
+  $nsample: nsample
 
 blockdiag_p(blockdiag):
-  p: 500, 2000
+  p: 500, 1000, 5000, 10000
 
 blockdiag_k(blockdiag):
-  k: 10, 50, 200
+  k: 2, 5, 15, 20
 
 blockdiag_h2(blockdiag):
-  h2: 0.4, 0.8
+  h2: 0.05, 0.1, 0.3, 0.4
 
 blockdiag_h2shared(blockdiag):
-  h2_shared_frac: 0.2, 0.4, 0.8, 1.0
+  h2_shared_frac: 0.2, 0.8, 1.0
 
 blockdiag_aq(blockdiag):
-  aq: 0.2, 0.4, 0.8
+  aq: 0.4, 0.8
 
 # LRMA modules
 # ===================
@@ -79,16 +83,12 @@ identical: identical.py
   Z: $Z
   $X: X
 
-# nnm_sparse: nnm_sparse.py
-#   Y: $Y
-#   max_iter: 10000
-
-# Factorization modules
-# ===================
+## Factorization modules
+## ===================
 factorgo: factorgo.py
   X: $X
-  k: 100
-  nsample: 10000
+  nsample: $nsample
+  k: 10
   $L_est: L
   $Lvar_est: Lvar
   $F_est: F
@@ -98,15 +98,27 @@ factorgo: factorgo.py
 
 truncated_svd: truncated_svd.py
   X: $X
-  k: 100
+  k: 10
   $L_est: L
-  $Lvar_est: Lvar
   $F_est: F
-  $Fvar_est: Fvar
   $S2: S2
+
 
 # Analysis modules
 # ===================
+score: score.py
+  Ltrue: $Ltrue
+  Ftrue: $Ftrue
+  L: $L_est
+  F: $F_est
+  labels: $Ctrue
+  $L_rmse: L_rmse
+  $F_rmse: F_rmse
+  $Z_rmse: Z_rmse
+  $L_psnr: L_psnr
+  $F_psnr: F_psnr
+  $Z_psnr: Z_psnr
+  $adj_MI: adj_MI
 
 # L_error
 

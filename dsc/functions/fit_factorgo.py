@@ -93,8 +93,8 @@ class FactorGoCLI:
         cmd += [zscore_fname, N_fname]
         cmd += ["-k", f"{k}"]
         cmd += ["-o", res_prefix]
-        os.environ['NUMEXPR_NUM_THREADS'] = f"{numthreads}"
-        os.environ['NUMEXPR_MAX_THREADS'] = f"{numthreads}"
+        #os.environ['NUMEXPR_NUM_THREADS'] = f"{numthreads}"
+        #os.environ['NUMEXPR_MAX_THREADS'] = f"{numthreads}"
         process = subprocess.run(cmd, 
                          stdout = subprocess.PIPE,
                          stderr = subprocess.PIPE)

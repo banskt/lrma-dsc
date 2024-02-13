@@ -23,13 +23,29 @@ def peak_signal_to_noise_ratio(original, recovered, mask = None):
     return res
 
 
-def matrix_dissimilarity_scores(original, recovered, mask = None):
+def matrix_dissimilarity_scores(original, recovered, mask = None, match = 'zerofill'):
     '''
     Procrustes analysis returns the square of the Frobenius norm.
     Use the rotated matrix to obtain the peak signal-to-noise ratio (PSNR).
+    Input matrices can have different dimensions.
+    There are two ways to match:
+        - clip: remove information from the larger matrix
+        - zerofill: pad zero columns in the smaller matrix
     '''
-    k = min(original.shape[1], recovered.shape[1])
-    R_orig, R_recv, m2 = procrustes(original[:, 0:k], recovered[:, 0:k])
+    n_orig = original.shape[1]
+    n_recv = recovered.shape[1]
+    m = original.shape[0]
+    if match == 'clip':
+        n = min(n_orig, n_recv)
+        X = original[:, :n]
+        Y = recovered[:, :n]
+    elif match == 'zerofill':
+        n = max(n_orig, n_recv)
+        X = np.zeros((m, n))
+        Y = np.zeros((m, n))
+        X[:, :n_orig] = original
+        Y[:, :n_recv] = recovered
+    R_orig, R_recv, m2 = procrustes(X, Y)
     psnr = peak_signal_to_noise_ratio(R_orig, R_recv, mask)
     return np.sqrt(m2), psnr
 
