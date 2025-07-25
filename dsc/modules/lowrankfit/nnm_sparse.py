@@ -2,4 +2,4 @@
 
 from fit_lowrank import nnm_sparse
 
-X, M, model = nnm_sparse(Z, max_iter = max_iter)
+X, M, model = nnm_sparse(Z, max_iter = max_iter, cv_max_iter = cv_max_iter, mask = Zmask)

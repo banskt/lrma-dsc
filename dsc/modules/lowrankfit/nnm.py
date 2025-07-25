@@ -2,4 +2,4 @@
 
 from fit_lowrank import nnm
 
-X, model = nnm(Z, max_iter = max_iter)
+X, model = nnm(Z, max_iter = max_iter, cv_max_iter = cv_max_iter, mask = Zmask)

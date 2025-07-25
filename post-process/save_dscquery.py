@@ -39,7 +39,7 @@ outfile = os.path.normpath(args.outfile)
 #outfile = "/home/saikatbanerjee/work/sparse-regression/gradvi-experiments/dsc/results/linreg_indep_dscout.pkl"
 
 targets = ["simulate"] + \
-            [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq"]] + \
+            [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample"]] + \
             ["lowrankfit", "matfactor"] + \
             [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "adj_MI"]]
 

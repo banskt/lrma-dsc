@@ -1,4 +1,4 @@
-# DSC for evaluating different low rank matrix approximation methods in different scenarios.
+# DSC for evaluating different low rank matrix completion using different methods.
 #
 
 DSC:
@@ -9,71 +9,58 @@ DSC:
                   modules/lowrankfit,
                   modules/matfactor,
                   modules/score
-  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/blockdiag
-  replicate:      10
+  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/panukb
+  replicate:      1
   define:
-    simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
-    lowrankfit:   rpca, nnm, nnm_sparse, identical
+    simulate:     ukbb
+    lowrankfit:   rpca, nnm, nnm_sparse 
   run:
-    lrma:         simulate * lowrankfit * truncated_svd * score
-    factorgo:     simulate * identical * factorgo * score
+    lrmc:         simulate * lowrankfit
 
 # simulate modules
+# We use the PanUKB data as input.
+# We mask 20% of the input data. 
+# The goal is to complete the matrix.
+# For each method, we use CV to find the optimum threshold of nuclear norm.
+# We do not want the CV to know the masked values. 
+# After training, we will compare the accuracy of predicting the masked values.
 # ===================
 
-blockdiag: blockdiag.py
-  n: 200
-  p: 2000
-  k: 10
-  Q: 3
-  h2: 0.2
-  h2_shared_frac: 0.5
-  aq: 0.6
-  a0: 0.2
-  nsample_minmax: (10000, 40000)
-  sharing_proportion: 1.0
-  seed: None
-  $Z: Z
-  $effect_size_obs: effect_size_obs
-  $effect_size_true: effect_size_true
-  $Ltrue: L
-  $Ftrue: F
-  $Mtrue: M
-  $Ctrue: C
-  $nsample: nsample
+ukbb: panukb.py
+  data_dir: "/gpfs/commons/home/sbanerjee/work/npd/PanUKB/data"
+  h2_cut: "0.1"
+  pval_cut: "5e-08"
+  mask_ratio: 0.2
+  $Ztrue: X_cent
+  $Z: Z_cent
+  $Zmask: Z_mask
 
-blockdiag_p(blockdiag):
-  p: 500, 1000, 5000, 10000
 
-blockdiag_k(blockdiag):
-  k: 2, 5, 15, 20
-
-blockdiag_h2(blockdiag):
-  h2: 0.05, 0.1, 0.3, 0.4
-
-blockdiag_h2shared(blockdiag):
-  h2_shared_frac: 0.2, 0.8, 1.0
-
-blockdiag_aq(blockdiag):
-  aq: 0.4, 0.8
-
-# LRMA modules
+# LRMC modules
 # ===================
-rpca: rpca.py
+rpca: rpca_cv.py
+  Ztrue: $Ztrue
   Z: $Z
+  Zmask: $Zmask
   max_iter: 10000
+  $cvlmb: cvlmb
+  $cvrmse: cvrmse
   $X: X
   $M: M
   $model: model
 
 nnm: nnm.py
   Z: $Z
+  Zmask: $Zmask
+  cv_max_iter: 1000
   max_iter: 10000
   $X: X
   $model: model
 
 nnm_sparse: nnm_sparse.py
   Z: $Z
+  Zmask: $Zmask
+  cv_max_iter: 1000
   max_iter: 10000
   $X: X
   $M: M
@@ -125,3 +112,10 @@ score: score.py
 # adjusted_MI
 
 # matrix_rank
+
+
+# Plot modules
+# ===================
+
+# Manuscript modules
+# ===================

@@ -9,10 +9,10 @@ DSC:
                   modules/lowrankfit,
                   modules/matfactor,
                   modules/score
-  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma_single
-  replicate:      2
+  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/blockdiag_noisy
+  replicate:      10
   define:
-    simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
+    simulate:     blockdiag
     lowrankfit:   rpca, nnm, nnm_sparse, identical
   run:
     lrma:         simulate * lowrankfit * truncated_svd * score
@@ -30,10 +30,11 @@ blockdiag: blockdiag.py
   h2_shared_frac: 0.5
   aq: 0.6
   a0: 0.2
-  nsample_min: 10000
-  nsample_max: 40000
+  nsample_minmax: (100, 400), (1000, 4000), (10000, 40000)
   sharing_proportion: 1.0
+  seed: 42
   $Z: Z
+  $Zmask: None
   $effect_size_obs: effect_size_obs
   $effect_size_true: effect_size_true
   $Ltrue: L
@@ -42,25 +43,26 @@ blockdiag: blockdiag.py
   $Ctrue: C
   $nsample: nsample
 
-blockdiag_p(blockdiag):
-  p: 500, 1000, 5000, 10000
-
-blockdiag_k(blockdiag):
-  k: 2, 5, 15, 20
-
-blockdiag_h2(blockdiag):
-  h2: 0.05, 0.1, 0.3, 0.4
-
-blockdiag_h2shared(blockdiag):
-  h2_shared_frac: 0.2, 0.8, 1.0
-
-blockdiag_aq(blockdiag):
-  aq: 0.4, 0.8
+# blockdiag_p(blockdiag):
+#   p: 500, 1000, 5000, 10000
+# 
+# blockdiag_k(blockdiag):
+#   k: 2, 5, 15, 20
+# 
+# blockdiag_h2(blockdiag):
+#   h2: 0.05, 0.1, 0.3, 0.4
+# 
+# blockdiag_h2shared(blockdiag):
+#   h2_shared_frac: 0.2, 0.8, 1.0
+# 
+# blockdiag_aq(blockdiag):
+#   aq: 0.4, 0.8
 
 # LRMA modules
 # ===================
 rpca: rpca.py
   Z: $Z
+  Zmask: $Zmask
   max_iter: 10000
   $X: X
   $M: M
@@ -68,13 +70,17 @@ rpca: rpca.py
 
 nnm: nnm.py
   Z: $Z
+  Zmask: $Zmask
   max_iter: 10000
+  cv_max_iter: 1000
   $X: X
   $model: model
 
 nnm_sparse: nnm_sparse.py
   Z: $Z
+  Zmask: $Zmask
   max_iter: 10000
+  cv_max_iter: 1000
   $X: X
   $M: M
   $model: model
@@ -125,10 +131,3 @@ score: score.py
 # adjusted_MI
 
 # matrix_rank
-
-
-# Plot modules
-# ===================
-
-# Manuscript modules
-# ===================

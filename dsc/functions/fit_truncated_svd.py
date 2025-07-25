@@ -11,9 +11,9 @@ def truncated_svd(X, k):
     U = U[:, 0:k]
     S = S[0:k]
     V = Vt.T
-    V = V[:, 0:k]
+    F = V[:, 0:k]
     L = U @ np.diag(S)
-    F = V @ np.diag(S)
+    # F = V @ np.diag(S)
     S2 = np.square(S)
     return L, F, S2
 
@@ -23,6 +23,7 @@ def truncated_svd_fast(X, k):
     tsvd = TruncatedSVD(n_components=k, n_iter=20)
     US = tsvd.fit_transform(csr_matrix(X_cent))
     Vt = tsvd.components_
-    F  = Vt.T @ np.diag(tsvd.singular_values_)
+    # F  = Vt.T @ np.diag(tsvd.singular_values_)
+    F = Vt.T
     S2 = np.square(tsvd.singular_values_)
     return US, F, S2

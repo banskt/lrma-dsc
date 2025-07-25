@@ -89,3 +89,19 @@ def effect_size(n, p, k, Q, h2, g2,
     # observed Z-scores
     Z = Yobs / stderr
     return Z, Yobs, Y, L, F, M, C
+
+
+def generate_masked_input(Y, mask):
+    Ymiss_nan = Y.copy()
+    Ymiss_nan[mask] = np.nan
+    Ymiss_nan_cent = Ymiss_nan - np.nanmean(Ymiss_nan, axis = 0, keepdims = True)
+    # Ymiss_nan_cent[mask] = 0.0
+    return Ymiss_nan_cent
+
+
+def generate_mask(n, p, ratio):
+    mask = np.ones(n * p)
+    nzero = int(ratio * n * p)
+    mask[:nzero] = 0.0
+    np.random.shuffle(mask)
+    return mask.reshape(n,p) == 0.
