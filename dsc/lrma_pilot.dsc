@@ -10,26 +10,27 @@ DSC:
                   modules/lowrankfit,
                   modules/matfactor,
                   modules/score
-  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma
-  replicate:      10
+  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma_pilot
+  replicate:      1
   define:
-    simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
+    simulate:     blockdiag
     lowrankfit:   rpca, nnm, nnm_sparse
     mfmethods:    truncated_svd, factorgo, flashier
   run:
     clorinn:      simulate * lowrankfit * truncated_svd * score
     benchmark:    simulate * identical * mfmethods * score
+#    trial:        simulate * identical * flashier * score
 
 # simulate modules
 # ===================
 
 blockdiag: blockdiag.py
   n: 200
-  p: 2000
+  p: 500
   k: 10
   Q: 3
   h2: 0.2
-  h2_shared_frac: 0.6
+  h2_shared_frac: 0.5
   aq: 0.6
   a0: 0.2
   nsample_minmax: (10000, 40000)
@@ -44,21 +45,6 @@ blockdiag: blockdiag.py
   $Mtrue: M
   $Ctrue: C
   $nsample: nsample
-
-blockdiag_p(blockdiag):
-  p: 500, 1000, 5000, 10000
-
-blockdiag_k(blockdiag):
-  k: 2, 5, 15, 20
-
-blockdiag_h2(blockdiag):
-  h2: 0.05, 0.1, 0.3, 0.4
-
-blockdiag_h2shared(blockdiag):
-  h2_shared_frac: 0.2, 0.4, 0.8, 1.0
-
-blockdiag_aq(blockdiag):
-  aq: 0.4, 0.8
 
 # LRMA modules
 # ===================
@@ -138,3 +124,9 @@ score: score.py
   $F_psnr: F_psnr
   $Z_psnr: Z_psnr
   $adj_MI: adj_MI
+
+# L_error
+
+# adjusted_MI
+
+# matrix_rank

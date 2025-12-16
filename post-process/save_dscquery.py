@@ -40,14 +40,15 @@ outfile = os.path.normpath(args.outfile)
 
 targets = ["simulate"] + \
             [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample"]] + \
-            ["lowrankfit", "matfactor"] + \
+            ["lowrankfit", "mfmethods"] + \
             [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "adj_MI"]]
 
-groups = ["matfactor: truncated_svd, factorgo"]
+#groups = ["matfactor: truncated_svd, factorgo"]
 
 
 if os.path.isdir(os.path.dirname(outfile)):
-    dscout = dscrutils.dscquery(os.path.realpath(dscdir), targets, groups = groups)
+    #dscout = dscrutils.dscquery(os.path.realpath(dscdir), targets, groups = groups)
+    dscout = dscrutils.dscquery(os.path.realpath(dscdir), targets)
     dscout.to_pickle(outfile)
 else:
     print ("No such file or directory: {:s}".format(os.path.dirname(outfile)))

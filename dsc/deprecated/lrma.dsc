@@ -2,23 +2,21 @@
 #
 
 DSC:
-  R_libs:         flashier 
   python_modules: numpy,
-                  clorinn
+                  nnwmf
   lib_path:       functions
   exec_path:      modules/simulate,
                   modules/lowrankfit,
                   modules/matfactor,
                   modules/score
-  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma
+  output:         /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/blockdiag
   replicate:      10
   define:
     simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
-    lowrankfit:   rpca, nnm, nnm_sparse
-    mfmethods:    truncated_svd, factorgo, flashier
+    lowrankfit:   rpca, nnm, nnm_sparse, identical
   run:
-    clorinn:      simulate * lowrankfit * truncated_svd * score
-    benchmark:    simulate * identical * mfmethods * score
+    lrma:         simulate * lowrankfit * truncated_svd * score
+    factorgo:     simulate * identical * factorgo * score
 
 # simulate modules
 # ===================
@@ -29,14 +27,13 @@ blockdiag: blockdiag.py
   k: 10
   Q: 3
   h2: 0.2
-  h2_shared_frac: 0.6
+  h2_shared_frac: 0.5
   aq: 0.6
   a0: 0.2
   nsample_minmax: (10000, 40000)
   sharing_proportion: 1.0
   seed: None
   $Z: Z
-  $Zmask: None
   $effect_size_obs: effect_size_obs
   $effect_size_true: effect_size_true
   $Ltrue: L
@@ -55,7 +52,7 @@ blockdiag_h2(blockdiag):
   h2: 0.05, 0.1, 0.3, 0.4
 
 blockdiag_h2shared(blockdiag):
-  h2_shared_frac: 0.2, 0.4, 0.8, 1.0
+  h2_shared_frac: 0.2, 0.8, 1.0
 
 blockdiag_aq(blockdiag):
   aq: 0.4, 0.8
@@ -64,7 +61,6 @@ blockdiag_aq(blockdiag):
 # ===================
 rpca: rpca.py
   Z: $Z
-  Zmask: $Zmask
   max_iter: 10000
   $X: X
   $M: M
@@ -72,17 +68,13 @@ rpca: rpca.py
 
 nnm: nnm.py
   Z: $Z
-  Zmask: $Zmask
   max_iter: 10000
-  cv_max_iter: 1000
   $X: X
   $model: model
 
 nnm_sparse: nnm_sparse.py
   Z: $Z
-  Zmask: $Zmask
   max_iter: 10000
-  cv_max_iter: 1000
   $X: X
   $M: M
   $model: model
@@ -111,17 +103,6 @@ truncated_svd: truncated_svd.py
   $F_est: F
   $S2: S2
 
-flashier: flashier.R
-  X: $X
-  L_prior: ebnm_point_normal
-  F_prior: ebnm_normal
-  k: 10
-  var_type: c(1,2)
-  backfit: TRUE
-  $L_est: out$L
-  $F_est: out$F
-  $S2: out$S2
-
 
 # Analysis modules
 # ===================
@@ -138,3 +119,9 @@ score: score.py
   $F_psnr: F_psnr
   $Z_psnr: Z_psnr
   $adj_MI: adj_MI
+
+# L_error
+
+# adjusted_MI
+
+# matrix_rank

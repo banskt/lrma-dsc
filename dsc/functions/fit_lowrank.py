@@ -1,8 +1,8 @@
 # Functions for low rank approximation used in the simulations
 
 import numpy as np
-from nnwmf.optimize import IALM
-from nnwmf.optimize import FrankWolfe, FrankWolfe_CV
+from clorinn.optimize import IALM
+from clorinn.optimize import FrankWolfe, FrankWolfe_CV
 
 # This is a placeholder until I find a proper
 # dict converter of the class.
