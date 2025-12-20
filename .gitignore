@@ -11,6 +11,8 @@
 **/.dsc
 dsc/results
 dsc/trial
+dsc/lrma_dsc.err
+dsc/lrma_dsc.out
 
 # Archive
 archive

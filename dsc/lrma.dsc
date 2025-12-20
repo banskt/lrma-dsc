@@ -15,7 +15,7 @@ DSC:
   define:
     simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
     lowrankfit:   rpca, nnm, nnm_sparse
-    mfmethods:    truncated_svd, factorgo, flashier
+    mfmethods:    truncated_svd, factorgo, flashier, flashier_sparse, guide
   run:
     clorinn:      simulate * lowrankfit * truncated_svd * score
     benchmark:    simulate * identical * mfmethods * score
@@ -111,7 +111,25 @@ truncated_svd: truncated_svd.py
   $F_est: F
   $S2: S2
 
+guide: guide.py
+  X: $X
+  k: 10
+  $L_est: L
+  $F_est: F
+  $S2: S2
+
 flashier: flashier.R
+  X: $X
+  L_prior: ebnm_normal
+  F_prior: ebnm_normal
+  k: 10
+  var_type: 0
+  backfit: TRUE
+  $L_est: out$L
+  $F_est: out$F
+  $S2: out$S2
+
+flashier_sparse: flashier.R
   X: $X
   L_prior: ebnm_point_normal
   F_prior: ebnm_normal
