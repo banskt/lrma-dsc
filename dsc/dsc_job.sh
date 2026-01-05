@@ -24,5 +24,5 @@ export NUMEXPR_MAX_THREADS=${_N_JOB_CORES}
 export NUMEXPR_NUM_THREADS=${_N_JOB_CORES}
 
 # dsc -c 16 -v 3 lrma.dsc
-#dsc -c ${_N_JOB_CORES} -v 3 -o /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma_truncate --truncate lrma.dsc
+# dsc -c ${_N_JOB_CORES} -v 3 -o /gpfs/commons/groups/knowles_lab/sbanerjee/low_rank_matrix_approximation_numerical_experiments/lrma_truncate --truncate lrma.dsc
 dsc -s existing -c ${_N_JOB_CORES} lrma.dsc

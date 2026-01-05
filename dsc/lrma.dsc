@@ -2,7 +2,7 @@
 #
 
 DSC:
-  R_libs:         flashier 
+  R_libs:         flashier, gleanr 
   python_modules: numpy,
                   clorinn
   lib_path:       functions
@@ -15,7 +15,7 @@ DSC:
   define:
     simulate:     blockdiag, blockdiag_p, blockdiag_k, blockdiag_h2, blockdiag_h2shared, blockdiag_aq
     lowrankfit:   rpca, nnm, nnm_sparse
-    mfmethods:    truncated_svd, factorgo, flashier, flashier_sparse, guide
+    mfmethods:    truncated_svd, factorgo, flashier, flashier_sparse, guide, gleanr
   run:
     clorinn:      simulate * lowrankfit * truncated_svd * score
     benchmark:    simulate * identical * mfmethods * score
@@ -136,6 +136,14 @@ flashier_sparse: flashier.R
   k: 10
   var_type: c(1,2)
   backfit: TRUE
+  $L_est: out$L
+  $F_est: out$F
+  $S2: out$S2
+
+gleanr: gleanr.R
+  X: $X
+  effect_sizes: $effect_size_obs
+  k: 10
   $L_est: out$L
   $F_est: out$F
   $S2: out$S2
