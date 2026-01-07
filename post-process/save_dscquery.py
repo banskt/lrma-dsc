@@ -34,16 +34,13 @@ def parse_args():
 args = parse_args()
 
 dscdir  = os.path.normpath(args.dscdir)
-#dscdir = "/home/saikatbanerjee/scratch/work/gradvi-experiments/linreg_indep"
 outfile = os.path.normpath(args.outfile)
-#outfile = "/home/saikatbanerjee/work/sparse-regression/gradvi-experiments/dsc/results/linreg_indep_dscout.pkl"
 
 targets = ["simulate"] + \
-            [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample"]] + \
+            [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample_minmax"]] + \
             ["lowrankfit", "mfmethods"] + \
             [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "adj_MI"]]
 
-#groups = ["matfactor: truncated_svd, factorgo"]
 
 
 if os.path.isdir(os.path.dirname(outfile)):
@@ -54,5 +51,8 @@ else:
     print ("No such file or directory: {:s}".format(os.path.dirname(outfile)))
 
 ## one lines for copy-paste
-## targets = ["simulate", "simulate.dims", "simulate.se", "simulate.rho", "simulate.sfix", "simulate.pve", "fit", "fit.DSC_TIME", "mse.err", "coef_mse.err"]
+## dsc_name = "lrma_truncate"
+## dscdir = f"/gpfs/commons/home/sbanerjee/simdata/low_rank_matrix_approximation_numerical_experiments/{dsc_name}"
+## outfile = f"/gpfs/commons/home/sbanerjee/work/npd/lrma-dsc/dsc/results/{dsc_name}_dscout.pkl"
+## targets = ["simulate", "simulate.n", "simulate.p", "simulate.k", "simulate.h2", "simulate.h2_shared_frac", "simulate.aq", "lowrankfit", "mfmethods", "score.L_rmse", "score.F_rmse", "score.Z_rmse", "score.L_psnr", "score.F_psnr", "score.Z_psnr", "score.adj_MI"]
 ## dscrutils.dscquery(dscdir, targets).to_pickle(outfile)
