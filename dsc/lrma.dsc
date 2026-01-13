@@ -163,4 +163,5 @@ score: score.py
   $L_psnr: L_psnr
   $F_psnr: F_psnr
   $Z_psnr: Z_psnr
+  $MI: MI
   $adj_MI: adj_MI
