@@ -36,10 +36,11 @@ args = parse_args()
 dscdir  = os.path.normpath(args.dscdir)
 outfile = os.path.normpath(args.outfile)
 
-targets = ["simulate"] + \
-            [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample_minmax"]] + \
-            ["lowrankfit", "mfmethods"] + \
-            [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "MI", "adj_MI"]]
+targets = ["input_with_nan"] + \
+            [f"input_with_nan.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample_minmax", "missing_ratio"]] + \
+            ["mcmethods"] + \
+            [f"mcmethods.{x}" for x in ["n_iter", "time_sec"]] + \
+            [f"score.{x}" for x in ["test_rmse"]]
 
 
 

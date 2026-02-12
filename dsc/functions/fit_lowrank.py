@@ -1,6 +1,7 @@
 # Functions for low rank approximation used in the simulations
 
 import numpy as np
+import time
 from clorinn.optimize import IALM
 from clorinn.optimize import FrankWolfe, FrankWolfe_CV
 
@@ -15,6 +16,11 @@ def class_to_dict(classname, property_list = None):
     for info in property_list:
         model[info] = getattr(classname, info)
     return model
+
+
+def nuclear_norm(X):
+    s = np.linalg.svd(X, full_matrices=False, compute_uv=False)
+    return np.sum(s)
 
 
 def get_masked_rmse(original, recovered, mask = None):
@@ -86,3 +92,41 @@ def nnm_sparse(Y, max_iter = 1000, cv_max_iter = 1000, mask = None):
     nnm_dict["train_error"] = nnmcv.train_error_
     nnm_dict["test_error"] = nnmcv.test_error_
     return nnm.X, nnm.M_, nnm_dict
+
+
+def fit_frankwolfe(Y_obs_with_nan, kfolds = 2, max_iter = 1000, cv_max_iter = 1000, rank_seq = None):
+    """
+    Fits clorinn FrankWolfe on matrix with NaNs. Returns X_hat and diagnostics.
+    """
+
+    ### Step 1. Cross validation
+    t0 = time.perf_counter()
+    nnmcv = FrankWolfe_CV(kfolds = kfolds, model = 'nnm', max_iter = cv_max_iter)
+    nnmcv.fit(Y_obs_with_nan, rseq = rank_seq)
+    rank = nnmcv._optimized_rank()
+    t1 = time.perf_counter()
+
+    ### Step 2. Fit with optimum rank
+    t2 = time.perf_counter()
+    model = FrankWolfe(model = 'nnm', max_iter = max_iter, svd_max_iter = 50, show_progress = False, debug = False)
+    model.fit(Y_obs_with_nan, rank)
+    t3 = time.perf_counter()
+
+    X_hat = model.X
+    out = {
+        "time_sec": t3 - t2,
+        "time_cv_sec": t1 - t0,
+        "n_iter": len(model.steps),
+        "rank": rank,
+        "final_duality_gap": model.duality_gaps[-1],
+        "final_step": model.steps[-1],
+        "final_fx": model.fx[-1],
+        "cv_test_error": nnmcv.test_error,
+        "cv_train_error": nnmcv.training_error,
+        "duality_gaps": model.duality_gaps,
+        "fx": model.fx,
+        "steps": model.steps,
+        "model_dict": class_to_dict(model),
+    }
+    return X_hat, out
+
