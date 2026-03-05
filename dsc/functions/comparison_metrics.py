@@ -10,7 +10,9 @@ def standardize(X, axis = 0, center = True, scale = True):
     if center:
         X = X - np.mean(X, axis = axis, keepdims = True)
     if scale:
-        X /= np.std(X, axis = axis, keepdims = True)
+        std = np.std(X, axis = axis, keepdims = True)
+        std_safe = np.where(std == 0, 1.0, std)  # avoid division by zero
+        X = X / std_safe
     return X
 
 
