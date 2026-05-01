@@ -165,3 +165,5 @@ score: score.py
   $Z_psnr: Z_psnr
   $MI: MI
   $adj_MI: adj_MI
+  $MI_aligned: MI_aligned
+  $adj_MI_aligned: adj_MI_aligned
