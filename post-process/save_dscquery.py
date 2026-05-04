@@ -39,7 +39,7 @@ outfile = os.path.normpath(args.outfile)
 targets = ["simulate"] + \
             [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample_minmax"]] + \
             ["lowrankfit", "mfmethods"] + \
-            [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "MI", "adj_MI"]]
+            [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "MI", "adj_MI", "MI_aligned", "adj_MI_aligned"]]
 
 
 
@@ -54,5 +54,5 @@ else:
 ## dsc_name = "lrma_truncate"
 ## dscdir = f"/gpfs/commons/home/sbanerjee/simdata/low_rank_matrix_approximation_numerical_experiments/{dsc_name}"
 ## outfile = f"/gpfs/commons/home/sbanerjee/work/npd/lrma-dsc/dsc/results/{dsc_name}_dscout.pkl"
-## targets = ["simulate", "simulate.n", "simulate.p", "simulate.k", "simulate.h2", "simulate.h2_shared_frac", "simulate.aq", "lowrankfit", "mfmethods", "score.L_rmse", "score.F_rmse", "score.Z_rmse", "score.L_psnr", "score.F_psnr", "score.Z_psnr", "score.adj_MI"]
+## targets = ["simulate", "simulate.n", "simulate.p", "simulate.k", "simulate.h2", "simulate.h2_shared_frac", "simulate.aq", "lowrankfit", "mfmethods", "score.L_rmse", "score.F_rmse", "score.Z_rmse", "score.L_psnr", "score.F_psnr", "score.Z_psnr", "score.MI", "score.adj_MI", "score.MI_aligned", "score.adj_MI_aligned"]
 ## dscrutils.dscquery(dscdir, targets).to_pickle(outfile)

@@ -5,15 +5,15 @@
 #SBATCH --nodes=1            # minimum number of nodes to be allocated
 #SBATCH --ntasks=1           # number of tasks
 #SBATCH --cpus-per-task=8    # number of cores on the CPU for the task
-#SBATCH --mem=200G
-#SBATCH --time=7-00:00:00
+#SBATCH --mem=30G
+#SBATCH --time=0-06:00:00
 #SBATCH --output="%x.out"   # keep appending to the same output file
 #SBATCH --error="%x.err"    # keep appending to the same error file
 
 source ~/.bashrc
 
-# Load required modules
-module load R/4.4.3
+# Load required modules for NYGC cluster
+module load Renv/4.4.3-nygc
 module load FlexiBLAS
 module load conda/24.3.0
 conda activate py311

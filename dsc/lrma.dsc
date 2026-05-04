@@ -157,13 +157,20 @@ score: score.py
   L: $L_est
   F: $F_est
   labels: $Ctrue
+  $global_scale: sg
+  $balancing_impact: balancing_impact
   $L_rmse: L_rmse
   $F_rmse: F_rmse
   $Z_rmse: Z_rmse
+  $L_rel_rmse: L_rel_rmse
+  $F_rel_rmse: F_rel_rmse
+  $Z_rel_rmse: Z_rel_rmse
   $L_psnr: L_psnr
   $F_psnr: F_psnr
   $Z_psnr: Z_psnr
-  $MI: MI
-  $adj_MI: adj_MI
-  $MI_aligned: MI_aligned
-  $adj_MI_aligned: adj_MI_aligned
+  $MI: MI_raw
+  $adj_MI: adj_MI_raw
+  $MI_cal: MI_cal
+  $adj_MI_cal: adj_MI_cal
+  $MI_oracle_aligned: MI_oracle_aligned
+  $adj_MI_oracle_aligned: adj_MI_oracle_aligned

@@ -12,8 +12,8 @@
 
 source ~/.bashrc
 
-# Load required modules
-module load R/4.4.3
+# Load required modules for NYGC cluster
+module load Renv/4.4.3-nygc
 module load FlexiBLAS
 module load conda/24.3.0
 conda activate py311

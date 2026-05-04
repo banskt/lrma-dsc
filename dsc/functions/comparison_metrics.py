@@ -29,6 +29,27 @@ def root_mean_squared_error(original, recovered, mask = None):
     return np.sqrt(mse)
 
 
+def relative_rmse(rmse, original):
+    """
+    This is the same as relative Frobenius error.
+    ||A - B||_F / ||A||_F
+    """
+    return rmse / np.sqrt(np.mean(original ** 2))
+
+
+def global_calibration(Z, Z_hat, eps = 1e-12):
+    denom = np.sum(Z_hat ** 2)
+    true_norm_sq = np.sum(Z ** 2)
+    threshold = eps**2 * true_norm_sq
+    if denom <= threshold:
+        sg = 0.0
+        is_zero_norm = True
+    else:
+        sg = np.sum(Z * Z_hat) / denom
+        is_zero_norm = False
+    return sg, is_zero_norm
+
+
 def peak_signal_to_noise_ratio(original, recovered, mask = None):
     if mask is None: mask = np.ones_like(original)
     omax = np.max(original[mask == 1])
@@ -188,3 +209,47 @@ def coupled_procrustes_per_factor_scaling(L_true, F_true, L_hat, F_hat, dim_poli
         "rotation": R,
         "scales": scales_safe,
     }
+
+def rebalance_to_unit_F(L, F, eps=1e-12, contrib_tol=1e-12):
+    """
+    Product-preserving rescaling:
+        L F.T = (L * ||F_j||) (F_j / ||F_j||).T
+
+    After this, columns of F have norm 1 when nonzero.
+    """
+    F_norm = np.sqrt(np.sum(F * F, axis=0))
+    L_norm = np.sqrt(np.sum(L * L, axis=0))
+
+    L_new = L.copy()
+    F_new = F.copy()
+
+    # Columns that can be safely rescaled.
+    rescalable = F_norm > eps
+
+    L_new[:, rescalable] = L_new[:, rescalable] * F_norm[rescalable].reshape(1, -1)
+    F_new[:, rescalable] = F_new[:, rescalable] / F_norm[rescalable].reshape(1, -1)
+
+    # Truly zero F columns contribute nothing meaningful.
+    L_new[:, ~rescalable] = 0.0
+    F_new[:, ~rescalable] = 0.0
+    
+    # Rebalancing impact: 0 means no change; 1 means typical 10x correction.
+    # Contribution from each column
+    contrib = L_norm * F_norm
+    if np.max(contrib) > eps:
+        is_contributing = contrib > contrib_tol * np.max(contrib)
+    else:
+        is_contributing = contrib > eps
+    impact_active = rescalable & is_contributing
+    
+    if np.any(impact_active):
+        log_dev = np.log10(np.maximum(F_norm[impact_active], eps))
+
+        weights = contrib[impact_active]
+        weights = weights / np.sum(weights)
+
+        impact_log10 = np.sqrt(np.sum(weights * log_dev**2))
+    else:
+        impact_log10 = np.nan
+
+    return L_new, F_new, impact_log10
