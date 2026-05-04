@@ -162,14 +162,22 @@ score: score.py
   $L_rmse: L_rmse
   $F_rmse: F_rmse
   $Z_rmse: Z_rmse
+  $L_rmse_bal: L_rmse_bal
+  $F_rmse_bal: F_rmse_bal
+  $Z_rmse_bal: Z_rmse_bal
   $L_rel_rmse: L_rel_rmse
   $F_rel_rmse: F_rel_rmse
   $Z_rel_rmse: Z_rel_rmse
+  $L_rel_rmse_bal: L_rel_rmse_bal
+  $F_rel_rmse_bal: F_rel_rmse_bal
+  $Z_rel_rmse_bal: Z_rel_rmse_bal
   $L_psnr: L_psnr
   $F_psnr: F_psnr
   $Z_psnr: Z_psnr
-  $MI: MI_raw
-  $adj_MI: adj_MI_raw
+  $MI_raw: MI_raw
+  $adj_MI_raw: adj_MI_raw
+  $MI_bal: MI_bal
+  $adj_MI_bal: adj_MI_bal
   $MI_cal: MI_cal
   $adj_MI_cal: adj_MI_cal
   $MI_oracle_aligned: MI_oracle_aligned

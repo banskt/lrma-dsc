@@ -39,7 +39,17 @@ outfile = os.path.normpath(args.outfile)
 targets = ["simulate"] + \
             [f"simulate.{x}" for x in ["n", "p", "k", "h2", "h2_shared_frac", "aq", "nsample_minmax"]] + \
             ["lowrankfit", "mfmethods"] + \
-            [f"score.{x}" for x in ["L_rmse", "F_rmse", "Z_rmse", "L_psnr", "F_psnr", "Z_psnr", "MI", "adj_MI", "MI_aligned", "adj_MI_aligned"]]
+            [f"score.{x}" for x in [
+                "global_scale", "balancing_impact",
+                "L_rmse", "F_rmse", "Z_rmse", 
+                "L_rmse_bal", "F_rmse_bal", "Z_rmse_bal", 
+                "L_rel_rmse", "F_rel_rmse", "Z_rel_rmse", 
+                "L_rel_rmse_bal", "F_rel_rmse_bal", "Z_rel_rmse_bal", 
+                "L_psnr", "F_psnr", "Z_psnr", 
+                "MI_raw", "adj_MI_raw",
+                "MI_bal", "adj_MI_bal",
+                "MI_cal", "adj_MI_cal",
+                "MI_oracle_aligned", "adj_MI_oracle_aligned"]]
 
 
 
