@@ -41,14 +41,19 @@ targets = ["simulate"] + \
             ["lowrankfit", "mfmethods"] + \
             [f"score.{x}" for x in [
                 "global_scale", "balancing_impact",
-                "L_rmse", "F_rmse", "Z_rmse", 
+                "L_rmse_raw", "F_rmse_raw", "Z_rmse_raw", 
                 "L_rmse_bal", "F_rmse_bal", "Z_rmse_bal", 
-                "L_rel_rmse", "F_rel_rmse", "Z_rel_rmse", 
+                "L_rmse_cal", "F_rmse_cal", "Z_rmse_cal", 
+                "L_rmse", "F_rmse", "Z_rmse", 
+                "L_rel_rmse_raw", "F_rel_rmse_raw", "Z_rel_rmse_raw", 
                 "L_rel_rmse_bal", "F_rel_rmse_bal", "Z_rel_rmse_bal", 
+                "L_rel_rmse_cal", "F_rel_rmse_cal", "Z_rel_rmse_cal", 
+                "L_rel_rmse", "F_rel_rmse", "Z_rel_rmse", 
                 "L_psnr", "F_psnr", "Z_psnr", 
                 "MI_raw", "adj_MI_raw",
                 "MI_bal", "adj_MI_bal",
                 "MI_cal", "adj_MI_cal",
+                "MI_bal_cal", "adj_MI_bal_cal",
                 "MI_oracle_aligned", "adj_MI_oracle_aligned"]]
 
 
