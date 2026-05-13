@@ -189,14 +189,28 @@ def coupled_procrustes_per_factor_scaling(L_true, F_true, L_hat, F_hat, dim_poli
         numer = np.sum(F_rot * F_true_m, axis=0)
         denom = np.sum(F_rot * F_rot, axis=0)
         scales = np.ones(F_rot.shape[1], dtype=float)
-        # valid mask for columns with enough signal
-        valid = denom > eps
-        scales[valid] = numer[valid] / denom[valid]
+
+        # Columns that are truly absent in the simulation truth.
+        # These are padded background columns when K_true < K_hat.
+        true_zero_cols = (
+            np.sum(F_true_m * F_true_m, axis=0) <= eps**2
+        ) & (
+            np.sum(L_true_m * L_true_m, axis=0) <= eps**2
+        )
+
+        # mask for columns with enough signal and true non-zero
+        fit_mask = (denom > eps**2) & (~true_zero_cols)
+        scales[fit_mask] = numer[fit_mask] / denom[fit_mask]
+
         # Clip nearly zero scales for numerical stability. But, keep the sign.
         # Only protect genuinely fitted scales, not padded/invalid columns
-        tiny_valid = valid & (np.abs(scales) < eps)
+        tiny_valid = fit_mask & (np.abs(scales) < eps)
         scales_safe = scales.copy()
         scales_safe[tiny_valid] = np.where(scales_safe[tiny_valid] >= 0, eps, -eps)
+        # For true-zero columns, do not scale.
+        # This penalizes extra estimated factors directly instead of exploding L.
+        scales_safe[true_zero_cols] = 1.0
+
     
         F_aligned = F_rot * scales_safe.reshape(1, -1)
         L_aligned = L_rot / scales_safe.reshape(1, -1)
