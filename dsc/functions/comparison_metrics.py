@@ -207,9 +207,11 @@ def coupled_procrustes_per_factor_scaling(L_true, F_true, L_hat, F_hat, dim_poli
         tiny_valid = fit_mask & (np.abs(scales) < eps)
         scales_safe = scales.copy()
         scales_safe[tiny_valid] = np.where(scales_safe[tiny_valid] >= 0, eps, -eps)
-        # For true-zero columns, do not scale.
+        # For true-zero columns, scale with F_norm for balancing
         # This penalizes extra estimated factors directly instead of exploding L.
-        scales_safe[true_zero_cols] = 1.0
+        F_rot_norm = np.sqrt(np.sum(F_rot * F_rot, axis=0))
+        scaleable_true_zero_cols = true_zero_cols & (F_rot_norm > eps)
+        scales_safe[scaleable_true_zero_cols] = 1.0 / F_rot_norm[scaleable_true_zero_cols]
 
     
         F_aligned = F_rot * scales_safe.reshape(1, -1)
